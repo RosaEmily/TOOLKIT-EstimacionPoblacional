@@ -1,7 +1,5 @@
 <template>
   <b-container>
-
-    <button v-on:click="excecuteAlgorithms">HERE</button>
     <b-card no-body class="mb-2">
       <b-card-header header-tag="header" class="p-1" role="tab">
         <h3 style="float: left!important">Datos</h3>
@@ -119,8 +117,7 @@
         </section>
               </div>
             </div>
-
-            <b-button type="submit" variant="primary">Submit</b-button>
+            <b-button variant="primary" v-on:click="excecuteAlgorithms">EJECUTAR</b-button>
           </b-form>
         </b-card-body>
       </b-collapse>
@@ -259,43 +256,73 @@ export default {
     }
   },
   methods: {
+    //this.chartData.datasets[0].data
     calculateYears: function () {
-      var year = this.year;
-      this.chartData.datasets[0].data.forEach(()=>{
+      var year = parseInt(this.form.año);
+      var years_proy = parseInt(this.form.proyeccion);
+      for(var i=0;i<years_proy;i++){
+        this.dataAnioAlgorithm.push(year++);
+      }
+      /*this.Censos.forEach(()=>{
         year = year +1;
         this.dataAnioAlgorithm.push(year);
-      })
+      })*/
+      console.log("arrayAños",this.dataAnioAlgorithm);
     },
     firstAlgorithm: function () {
-      var year = this.year;
-      this.chartData.datasets[0].data.forEach((element)=>{
+      var year = parseInt(this.form.año);
+      var population;
+      var years_proy = parseInt(this.form.proyeccion);
+      for(var i=0;i<years_proy;i++){
+        population = parseInt(this.Censos.slice(-1)[0].poblacion)+i+1
+        this.dataPoblacionFirstAlgorithm.push(population);
+        this.dataFirstAlgorithm.push({Anio:year++,Poblacion:population});
+      }
+      /*this.Censos.forEach((element)=>{
         year = year +1;
-        this.dataPoblacionFirstAlgorithm.push(element+1);
-        this.dataFirstAlgorithm.push({Anio:year+1,Poblacion:element+1});
-      })
-      console.log(this.dataFirstAlgorithm);
+        population = parseInt(element.poblacion)+1
+        this.dataPoblacionFirstAlgorithm.push(population);
+        this.dataFirstAlgorithm.push({Anio:year+1,Poblacion:population});
+      })*/
+      console.log("arrayFirst",this.dataFirstAlgorithm);
     },
     secondAlgorithm: function () {
-      var year = this.year;
-      this.chartData.datasets[0].data.forEach((element)=>{
+      var year = parseInt(this.form.año);
+      var population;
+      var years_proy = parseInt(this.form.proyeccion);
+      for(var i=0;i<years_proy;i++){
+        population = parseInt(this.Censos.slice(-1)[0].poblacion)+i+2
+        this.dataPoblacionSecondAlgorithm.push(population);
+        this.dataSecondAlgorithm.push({Anio:year++,Poblacion:population});
+      }
+      /*this.Censos.forEach((element)=>{
         year = year +1;
-        this.dataPoblacionSecondAlgorithm.push(element+2);
-        this.dataSecondAlgorithm.push({Anio:year+1,Poblacion:element+2})
-      })
-      console.log(this.dataSecondAlgorithm);
+        population = parseInt(element.poblacion)+2
+        this.dataPoblacionSecondAlgorithm.push(population);
+        this.dataSecondAlgorithm.push({Anio:year+1,Poblacion:population})
+      })*/
+      console.log("arraySecond",this.dataSecondAlgorithm);
     },
     thirdAlgorithm: function () {
-      var year = this.year;
-      this.chartData.datasets[0].data.forEach((element)=>{
+      var year = parseInt(this.form.año);
+      var population;
+      var years_proy = parseInt(this.form.proyeccion);
+      for(var i=0;i<years_proy;i++){
+        population = parseInt(this.Censos.slice(-1)[0].poblacion)+i+3
+        this.dataPoblacionThirdAlgorithm.push(population);
+        this.dataThirdAlgorithm.push({Anio:year++,Poblacion:population})
+      }
+      /*this.Censos.forEach((element)=>{
         year = year +1;
-        this.dataPoblacionThirdAlgorithm.push(element+3);
-        this.dataThirdAlgorithm.push({Anio:year+1,Poblacion:element+3})
-      })
-      console.log(this.dataThirdAlgorithm);
+        population = parseInt(element.poblacion)+3
+        this.dataPoblacionThirdAlgorithm.push(population);
+        this.dataThirdAlgorithm.push({Anio:year+1,Poblacion:population})
+      })*/
+      console.log("arrayThird",this.dataThirdAlgorithm);
     },
     clearDataAlgorithms: function () {
       this.dataAnioAlgorithm = [];
-      this.chartData.datasets[0].data = [40, 39, 10, 40, 39, 80, 40];
+      //this.chartData.datasets[0].data = [40, 39, 10, 40, 39, 80, 40];
       this.dataFirstAlgorithm = [];
       this.dataPoblacionFirstAlgorithm = [];
       this.dataSecondAlgorithm = [];
