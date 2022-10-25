@@ -11,7 +11,7 @@
         </b-card-header>
         <b-collapse visible id="collapse-1">
           <b-card-body>
-            <b-form v-on:submit.prevent="onSubmit">
+            <b-form>
               <div class="row">
                   <div class="col-6">
                     <div class="row">
@@ -104,13 +104,13 @@
                           <td>
                               <!-- Botón para guardar la información actualizada -->
                               <span v-if="formActualizar && idActualizar == index">
-                                  <button @click="guardarActualizacion(index)" class="btn btn-success">Guardar</button>
+                                  <b-button v-on:click="guardarActualizacion(index)" class="btn btn-success">Guardar</b-button>
                               </span>
                               <span v-else>
                                   <!-- Botón para mostrar el formulario de actualizar -->
-                                  <button @click="verFormActualizar(index)" class="btn btn-warning">Actualizar</button>
+                                  <b-button v-on:click="verFormActualizar(index)" class="btn btn-warning">Actualizar</b-button>
                                   <!-- Botón para borrar -->
-                                  <button @click="borrarCenso(index)" class="btn btn-danger">Borrar</button>
+                                  <b-button v-on:click="borrarCenso(index)" class="btn btn-danger">Borrar</b-button>
                               </span>
                           </td>
                       </tr>
@@ -119,7 +119,7 @@
           </section>
                 </div>
               </div>
-              <b-button type="submit" variant="primary">EJECUTAR</b-button>
+              <b-button v-on:click="onSubmit" variant="primary">EJECUTAR</b-button>
             </b-form>
           </b-card-body>
         </b-collapse>
@@ -137,7 +137,7 @@
       </b-card>
       <b-card no-body class="mb-2">
         <b-card-header header-tag="header" class="p-1" role="tab">
-          <h3 style="float: left!important">Proyección anual</h3>
+          <h3 style="float: left!important">Proyección Anual</h3>
           <b-button style="float: right!important" v-b-toggle.collapse-3>-</b-button>
         </b-card-header>
         <b-collapse id="collapse-3">
@@ -151,7 +151,7 @@
               </div>
             </div>
             <div v-else class="row">
-              <b-alert show variant="warning">Para poder visualizar resultados es necesario ejecutar alguno de los métodos de proyección poblacional.</b-alert>
+              <b-alert show variant="warning">Para poder visualizar resultados es necesario ejecutar los métodos de proyección poblacional.</b-alert>
             </div>
           </b-card-body>
         </b-collapse>
@@ -298,11 +298,11 @@ export default {
           timer: 3000,
           timerProgressBar: true,
         });
-      } else if(this.Censos.length <=0) {
+      } else if(this.Censos.length <5) {
         this.$swal({
           toast: true,
           icon: 'error',
-          title: 'La data histórica es necesaria para poder realizar la estimación poblacional',
+          title: 'Para poder realizar la estimación poblacional es necesario contar con una data histórica con longitud mayor o igual a 5',
           animation: false,
           position: 'bottom-right',
           showConfirmButton: false,
