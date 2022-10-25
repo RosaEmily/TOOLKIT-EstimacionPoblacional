@@ -158,7 +158,7 @@
       </b-card>
     </b-container>
     <footer class="text-center p-3 text-white" style="background-color: rgb(33, 37, 41); position: fixed; bottom: 0; width: 100%;">
-      Doc. Santos Fernández Juan Pedro | © 2022 Copyright
+      Dr. Santos Fernández Juan Pedro | © 2022 Copyright
     </footer>
   </div>
 </template>
