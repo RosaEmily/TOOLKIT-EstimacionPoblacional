@@ -46,15 +46,10 @@
                       <div class="col-6">
                         <b-form-group
                           id="input-group-1"
-                          label="Años de proyección"
+                          :label="form.proyeccion?'Años de proyección : ' + form.proyeccion: 'Años de proyección'"
                           label-for="input-1"
                         >
-                          <b-form-input
-                            id="input-1"
-                            v-model="form.proyeccion"
-                            type="number"
-                            placeholder="Ingrese los años de proyección"
-                          ></b-form-input>
+                          <b-form-input id="range-1" v-model="form.proyeccion" type="range" min="1" max="100" class="form-range mt-2"></b-form-input>
                         </b-form-group>
                       </div>
                     </div>
