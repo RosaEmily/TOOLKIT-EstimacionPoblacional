@@ -137,17 +137,34 @@
         </b-card-header>
         <b-collapse id="collapse-3">
           <b-card-body>
-            <div v-if="tableAlgorithms.length>0" class="row">
-              <div class="col-4">
-                <b-table striped hover :items="tableAlgorithms"></b-table>
-              </div>
-              <div class="col-8">
-                  <LineChart  :chart-options="chartOptions" :chart-data="chartData"/>
-              </div>
-            </div>
-            <div v-else class="row">
-              <b-alert show variant="warning">Para poder visualizar resultados es necesario ejecutar los métodos de proyección poblacional.</b-alert>
-            </div>
+            <b-tabs card>
+              <b-tab title="Mejor Proyección" active>
+                <div v-if="tableBestAlgorithms.length>0" class="row">
+                  <div class="col-4">
+                    <b-table striped hover :items="tableBestAlgorithms"></b-table>
+                  </div>
+                  <div class="col-8">
+                      <LineChart  :chart-options="chartOptions" :chart-data="chartBestData"/>
+                  </div>
+                </div>
+                <div v-else class="row">
+                  <b-alert show variant="warning">Para poder visualizar resultados es necesario ejecutar los métodos de proyección poblacional.</b-alert>
+                </div>
+              </b-tab>
+              <b-tab title="Proyecciones">
+                <div v-if="tableAlgorithms.length>0" class="row">
+                  <div class="col-4">
+                    <b-table striped hover :items="tableAlgorithms"></b-table>
+                  </div>
+                  <div class="col-8">
+                      <LineChart  :chart-options="chartOptions" :chart-data="chartData"/>
+                  </div>
+                </div>
+                <div v-else class="row">
+                  <b-alert show variant="warning">Para poder visualizar resultados es necesario ejecutar los métodos de proyección poblacional.</b-alert>
+                </div>
+              </b-tab>
+            </b-tabs>
           </b-card-body>
         </b-collapse>
       </b-card>
@@ -218,6 +235,7 @@ export default {
       form:[],
       year: 2018,
       foods:[],
+      bestModel:0,
       tableAlgorithms:[],
       dataAñoAlgorithm: [],
       dataPoblacionArithmeticAlgorithm: [],
@@ -226,15 +244,22 @@ export default {
       dataGeometricAlgorithm: [],
       dataPoblacionExponentialAlgorithm: [],
       dataExponentialAlgorithm: [],
+      tableBestAlgorithms:[],
+      chartBestData:{
+        labels: [
+          'null',
+        ],
+        datasets:[
+          {
+            label: 'best',
+            backgroundColor: '#f87979',
+            data: [40, 39, 10, 40, 39, 80, 40],
+          },
+        ]
+      },
       chartData: {
         labels: [
-          'Hola',
-          'Hola2',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July'
+          'null'
         ],
         datasets: [
           {
@@ -342,17 +367,26 @@ export default {
           this.dataAñoAlgorithm.push(year++);
       }
       this.chartData.labels = this.dataAñoAlgorithm;
+      this.chartBestData.labels = this.dataAñoAlgorithm;
       console.log("arrayAños",this.dataAñoAlgorithm);
     },
 
     arithmeticAlgorithm: function () {
       var years_proy = parseInt(this.form.proyeccion);
       var population;
-
+      var i=0
+      var k=0
       var n=this.Censos.length
-      var r = (this.Censos[n-1].poblacion - this.Censos[0].poblacion)*1.0/(this.Censos[n-1].año - this.Censos[0].año)
+      var r = 0
+      for(i=1; i<n;i++){
+        k = (this.Censos[i].poblacion - this.Censos[i-1].poblacion)*1.0/(this.Censos[i].año - this.Censos[i-1].año)
+        r = r + k;
+      }
 
-      for(var i=0;i<years_proy+n;i++){
+      r = r/(n-1);
+      console.log(r)
+
+      for(i=0;i<years_proy+n;i++){
         if(i==0){
           population=this.Censos[i].poblacion
           this.dataArithmeticAlgorithm.push({Año:this.Censos[i].año,Poblacion:Math.round(population)});
@@ -373,11 +407,19 @@ export default {
     geometricAlgorithm: function () {
       var years_proy = parseInt(this.form.proyeccion);
       var population;
-
+      var i=0
+      var k=0
       var n=this.Censos.length
-      var r = Math.pow((this.Censos[n-1].poblacion * 1/this.Censos[0].poblacion),1/(this.Censos[n-1].año - this.Censos[0].año)) - 1
+      var r = 0
+      for(i=1; i<n;i++){
+        k = Math.pow((this.Censos[i].poblacion * 1/this.Censos[i-1].poblacion),1/(this.Censos[i].año - this.Censos[i-1].año)) - 1
+        r = r + k;
+      }
 
-      for(var i=0;i<years_proy+n;i++){
+      r = r/(n-1);
+      console.log(r)
+
+      for(i=0;i<years_proy+n;i++){
         if(i==0){
           population=this.Censos[i].poblacion
           this.dataGeometricAlgorithm.push({Año:this.Censos[i].año,Poblacion:Math.round(population)});
@@ -425,6 +467,46 @@ export default {
       }
 
     },
+    mejorModelo:function () {
+      var suma1 = 0,suma2 = 0,suma3 = 0
+      var eca,eca1,eca2,ecg,ecg1,ecg2,ece,ece1,ece2
+      var n=this.Censos.length
+      var i
+      for(i=0; i<n;i++){
+        //Aritmetico
+        eca1 = 100.0-(this.Censos[i].poblacion*100.0/this.dataPoblacionArithmeticAlgorithm[i]);
+        eca2 = Math.abs(eca1/100.0);
+        eca = Math.pow(eca2, 2);
+        suma1 = suma1 + eca;
+
+        // Modelo geométrico
+        ecg1 = 100.0-(this.Censos[i].poblacion*100.0/this.dataPoblacionGeometricAlgorithm[i]);
+        ecg2 = Math.abs(ecg1/100.0);
+        ecg = Math.pow(ecg2, 2);
+        suma2 = suma2 + ecg;
+
+        // Modelo exponencial
+        ece1 = 100.0-(this.Censos[i].poblacion*100.0/this.dataPoblacionExponentialAlgorithm[i]);
+        ece2 = Math.abs(ece1/100.0);
+        ece = Math.pow(ece2, 2);
+        suma3 = suma3 + ece;
+      }
+      var proma = suma1/n;
+      var promg = suma2/n;
+      var prome = suma3/n;
+      // Selección del mejor modelo
+      var mejorModelo = 0;   // Falso
+      if ( (proma<promg) && (proma<prome) )
+        mejorModelo = 1;
+      else
+        if ( (promg<proma) && (promg<prome) )
+          mejorModelo = 2;
+        else
+          if ( (prome<proma) && (prome<promg) )
+            mejorModelo = 3;
+
+      this.bestModel= mejorModelo
+    },
     clearDataAlgorithms: function () {
       this.dataAñoAlgorithm = [];
       //this.chartData.datasets[0].data = [40, 39, 10, 40, 39, 80, 40];
@@ -438,18 +520,42 @@ export default {
     clusterAlgorithms: function () {
       var n=this.Censos.length
       var years_proy = parseInt(this.form.proyeccion);
-
-      for (var i = 0; i < years_proy+n; i++) {
+      var i
+      for (i = 0; i < years_proy+n; i++) {
         this.tableAlgorithms.push({Año:this.dataArithmeticAlgorithm[i].Año,Aritmetico:this.dataArithmeticAlgorithm[i].Poblacion, Geometrico: this.dataGeometricAlgorithm[i].Poblacion, Exponencial: this.dataExponentialAlgorithm[i].Poblacion})
-
       }
-    },
-    selectAlgorithm: function () {
-      //select the most accurate algorithm according to chi-square test
+
       this.chartData.datasets[0].data = this.dataPoblacionArithmeticAlgorithm;
       this.chartData.datasets[1].data = this.dataPoblacionGeometricAlgorithm;
       this.chartData.datasets[2].data = this.dataPoblacionExponentialAlgorithm;
-      this.clusterAlgorithms();
+    },
+    selectAlgorithm: function () {
+      //select the most accurate algorithm according to chi-square test
+      var n=this.Censos.length
+      var years_proy = parseInt(this.form.proyeccion);
+      var i
+      this.mejorModelo()
+      if(this.bestModel==1){
+        for (i = 0; i < years_proy+n; i++) {
+          this.tableBestAlgorithms.push({Año:this.dataArithmeticAlgorithm[i].Año,Aritmetico: this.dataArithmeticAlgorithm[i].Poblacion})
+        }
+        this.chartBestData.datasets[0].label = 'Aritmetico'
+        this.chartBestData.datasets[0].data = this.dataPoblacionArithmeticAlgorithm;
+      }else if(this.bestModel==2){
+        for (i = 0; i < years_proy+n; i++) {
+          this.tableBestAlgorithms.push({Año:this.dataArithmeticAlgorithm[i].Año,Geometrico: this.dataGeometricAlgorithm[i].Poblacion})
+        }
+        this.chartBestData.datasets[0].label = 'Geometrico'
+        this.chartBestData.datasets[0].data = this.dataPoblacionGeometricAlgorithm;
+      } else {
+        for (i = 0; i < years_proy+n; i++) {
+          this.tableBestAlgorithms.push({Año:this.dataArithmeticAlgorithm[i].Año,Exponencial: this.dataExponentialAlgorithm[i].Poblacion})
+        }
+        this.chartBestData.datasets[0].label = 'Exponencial'
+        this.chartBestData.datasets[0].data = this.dataPoblacionExponentialAlgorithm;
+      }
+
+
     },
 
     excecuteAlgorithms: function () {
@@ -458,6 +564,7 @@ export default {
       this.arithmeticAlgorithm();
       this.geometricAlgorithm();
       this.exponentialAlgorithm();
+      this.clusterAlgorithms();
       this.selectAlgorithm();
     },
     crearCenso: function () {
