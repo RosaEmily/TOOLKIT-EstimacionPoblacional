@@ -511,6 +511,8 @@ export default {
       this.dataAñoAlgorithm = [];
       //this.chartData.datasets[0].data = [40, 39, 10, 40, 39, 80, 40];
       this.dataArithmeticAlgorithm = [];
+      this.tableAlgorithms = [];
+      this.tableBestAlgorithms = [];
       this.dataPoblacionArithmeticAlgorithm = [];
       this.dataGeometricAlgorithm = [];
       this.dataPoblacionGeometricAlgorithm = [];
@@ -567,6 +569,7 @@ export default {
       this.clusterAlgorithms();
       this.selectAlgorithm();
     },
+
     crearCenso: function () {
                 // Anyadimos a nuestra lista
                 this.Censos.push({
