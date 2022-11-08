@@ -293,7 +293,7 @@ export default {
     }
   },
   methods: {
-    crearDataCenso(){
+    crearDataCensoPerú(){
       this.Censos=[
         {id:1,año:1940,poblacion:36957},
         {id:2,año:1961,poblacion:103320},
@@ -302,6 +302,17 @@ export default {
         {id:5,año:1993,poblacion:509312},
         {id:6,año:2007,poblacion:766082},
         {id:7,año:2017,poblacion:919899}
+      ]
+    },
+    crearDataCensoTrujillo(){
+      this.Censos=[
+        {id:1,año:1940,poblacion:7023111},
+        {id:2,año:1961,poblacion:10420357},
+        {id:3,año:1972,poblacion:14121564},
+        {id:4,año:1981,poblacion:17762231},
+        {id:5,año:1993,poblacion:22639443},
+        {id:6,año:2007,poblacion:28220764},
+        {id:7,año:2017,poblacion:31237385}
       ]
     },
     //this.chartData.datasets[0].data
@@ -602,7 +613,7 @@ export default {
             }
   },
   mounted() {
-    this.crearDataCenso()
+    this.crearDataCensoTrujillo()
   },
 
 
