@@ -120,73 +120,74 @@
         </b-collapse>
       </b-card>
       <b-card no-body class="mb-2">
-        <b-card-header header-tag="header" class="p-1" role="tab">
-          <h3 style="float: left!important">Resultados</h3>
-          <b-button style="float: right!important" v-b-toggle.collapse-2>-</b-button>
-        </b-card-header>
-        <b-collapse id="collapse-2">
-          <b-card-body>
-            <div class="row">
-              <div class="col-6">
-                <div class="row">
-                  <div class="col-12">
-                    <b-form-group
-                      id="input-group-1"
-                      label="Mejor Modelo"
-                      label-for="input-1"
-                    >
-                      <b-form-input
-                        id="input-1"
-                        v-model="bestResult.modelo"
-                        type="text" disabled
-                      ></b-form-input>
-                    </b-form-group>
-                  </div>
-                  <div class="col-6">
-                    <b-form-group
-                      id="input-group-1"
-                      label="Año"
-                      label-for="input-1"
-                    >
-                      <b-form-input
-                        id="input-1"
-                        v-model="bestResult.año"
-                        type="text" disabled
-                      ></b-form-input>
-                    </b-form-group>
-                  </div>
-                  <div class="col-6">
-                    <b-form-group
-                      id="input-group-1"
-                      label="Poblacion"
-                      label-for="input-1"
-                    >
-                      <b-form-input
-                        id="input-1"
-                        v-model="bestResult.poblacion"
-                        type="text" disabled
-                      ></b-form-input>
-                    </b-form-group>
-                  </div>
+      <b-card-header header-tag="header" class="p-1" role="tab">
+        <h3 style="float: left!important">Resultados</h3>
+        <b-button style="float: right!important" v-b-toggle.collapse-2>-</b-button>
+      </b-card-header>
+      <b-collapse id="collapse-2">
+        <b-card-body>
+          <div class="row">
+            <div class="col-6">
+              <div class="row">
+                <div class="col-12">
+                  <b-form-group
+                    id="input-group-1"
+                    label="Mejor Modelo"
+                    label-for="input-1"
+                  >
+                    <b-form-input
+                      id="input-1"
+                      v-model="bestResult.modelo"
+                      type="text" disabled
+                    ></b-form-input>
+                  </b-form-group>
                 </div>
-              </div>
-              <div class="col-6">
-                <b-form-group
-                      id="input-group-1"
-                      label="Resultados Generales"
-                      label-for="input-1"
-                  ></b-form-group>
-                <div class="row">
-                  <b-table striped hover :items="tableResultados"></b-table>
+                <div class="col-6">
+                  <b-form-group
+                    id="input-group-1"
+                    label="Año"
+                    label-for="input-1"
+                  >
+                    <b-form-input
+                      id="input-1"
+                      v-model="bestResult.año"
+                      type="text" disabled
+                    ></b-form-input>
+                  </b-form-group>
+                </div>
+                <div class="col-6">
+                  <b-form-group
+                    id="input-group-1"
+                    label="Poblacion"
+                    label-for="input-1"
+                  >
+                    <b-form-input
+                      id="input-1"
+                      v-model="bestResult.poblacion"
+                      type="text" disabled
+                    ></b-form-input>
+                  </b-form-group>
                 </div>
               </div>
             </div>
-          </b-card-body>
-        </b-collapse>
-      </b-card>
+            <div class="col-6">
+              <b-form-group
+                    id="input-group-1"
+                    label="Resultados Generales"
+                    label-for="input-1"
+                ></b-form-group>
+              <div class="row">
+                <b-table striped hover :items="tableResultados"></b-table>
+              </div>
+            </div>
+          </div>
+        </b-card-body>
+      </b-collapse>
+    </b-card>
       <b-card no-body class="mb-2">
         <b-card-header header-tag="header" class="p-1" role="tab">
           <h3 style="float: left!important">Proyección Anual</h3>
+          <b-button @click="exportToPDF" :disabled="tableBestAlgorithms.length<=0">EXPORTAR A PDF</b-button>
           <b-button style="float: right!important" v-b-toggle.collapse-3>-</b-button>
         </b-card-header>
         <b-collapse id="collapse-3">
@@ -195,7 +196,24 @@
               <b-tab title="Mejor Proyección" active>
                 <div v-if="tableBestAlgorithms.length>0" class="row">
                   <div class="col-4">
-                    <b-table striped hover :items="tableBestAlgorithms"></b-table>
+                    <b-table-simple>
+                      <b-thead class="table-dark">
+                        <b-tr>
+                          <b-th>Año</b-th>
+                          <b-th v-if="tableBestAlgorithms[0].Aritmetico">Aritmético</b-th>
+                          <b-th v-if="tableBestAlgorithms[0].Geometrico">Geométrico</b-th>
+                          <b-th v-if="tableBestAlgorithms[0].Exponencial">Exponencial</b-th>
+                        </b-tr>
+                      </b-thead>
+                      <b-tbody>
+                        <tr v-for="item in tableBestAlgorithms" :key="item.Año" :class="item.variant">
+                          <td>{{ item.Año }}</td>
+                          <td v-if="item.Aritmetico">{{ item.Aritmetico }}</td>
+                          <td v-if="item.Geometrico">{{ item.Geometrico }}</td>
+                          <td v-if="item.Exponencial">{{ item.Exponencial }}</td>
+                        </tr>
+                      </b-tbody>
+                    </b-table-simple>
                   </div>
                   <div class="col-8">
                       <LineChart  :chart-options="chartOptions" :chart-data="chartBestData"/>
@@ -208,7 +226,24 @@
               <b-tab title="Proyecciones">
                 <div v-if="tableAlgorithms.length>0" class="row">
                   <div class="col-4">
-                    <b-table striped hover :items="tableAlgorithms"></b-table>
+                    <b-table-simple>
+                      <b-thead class="table-dark">
+                        <b-tr>
+                          <b-th>Año </b-th>
+                          <b-th>Aritmético</b-th>
+                          <b-th>Geométrico</b-th>
+                          <b-th>Exponencial</b-th>
+                        </b-tr>
+                      </b-thead>
+                      <b-tbody>
+                        <tr v-for="item in tableAlgorithms" :key="item.Año" :class="item.variant">
+                          <td>{{ item.Año }}</td>
+                          <td>{{ item.Aritmetico }}</td>
+                          <td>{{ item.Geometrico }}</td>
+                          <td>{{ item.Exponencial }}</td>
+                        </tr>
+                      </b-tbody>
+                    </b-table-simple>
                   </div>
                   <div class="col-8">
                       <LineChart  :chart-options="chartOptions" :chart-data="chartData"/>
@@ -221,6 +256,114 @@
             </b-tabs>
           </b-card-body>
         </b-collapse>
+        <div>
+          <vue-html2pdf
+              :show-layout="false"
+              :float-layout="true"
+              :enable-download="true"
+              :preview-modal="true"
+              :filename="form.poblacion+'_'+form.año+'_'+form.proyeccion"
+              :pdf-quality="2"
+              :manual-pagination="true"
+              pdf-format="a4"
+              pdf-orientation="landscape"
+              pdf-content-width="1200px"
+              ref="html2Pdf"
+          >
+              <section slot="pdf-content" style="padding-left: 30px;">
+                <div class="row" style="padding-top: 30px;">
+                  <h1>TOOLKIT PARA LA ESTIMACIÓN DE POBLACIÓN ANUAL</h1>
+                </div>
+                <div class="row" style="padding-top: 30px;">
+                  <h4>DATOS INGRESADOS</h4>
+                  <div style="font-size: 1.2rem;">NOMBRE DE LA POBLACIÓN: {{form.poblacion}}</div>
+                  <div style="font-size: 1.2rem;">AÑO BASE: {{form.año}}</div>
+                  <div style="font-size: 1.2rem;">AÑOS DE PROYECCIÓN: {{form.proyeccion}}</div>
+                </div>
+                <div class="row" style="padding-top: 30px;">
+                  <h4>RESULTADOS</h4>
+                  <div style="font-size: 1.2rem;">MEJOR MODELO: {{bestResult.modelo}}</div>
+                  <div style="font-size: 1.2rem;">ERROR DEL MEJOR MODELO: {{bestError}}</div>
+                  <div style="font-size: 1.2rem;">ÚLTIMO AÑO DE PROYECCIÓN: {{bestResult.año}}</div>
+                  <div style="font-size: 1.2rem;">ÚLTIMA POBLACIÓN DE PROYECCIÓN: {{bestResult.poblacion}}</div>
+                </div>
+                <div class="html2pdf__page-break"/>
+                <div class="row" style="padding-top: 30px;">
+                  <h3>TODOS LOS MODELOS - DATOS</h3>
+                </div>
+                <div v-if="tableAlgorithms.length>0" class="row" style="padding-top: 20px;">
+                  <div class="col-12">
+                    <b-table-simple>
+                      <b-thead class="table-dark">
+                        <b-tr>
+                          <b-th>Año</b-th>
+                          <b-th>Aritmético</b-th>
+                          <b-th>Geométrico</b-th>
+                          <b-th>Exponencial</b-th>
+                        </b-tr>
+                      </b-thead>
+                      <b-tbody>
+                        <tr v-for="(item,index) in tableAlgorithms" :key="index" :class="item.variant">
+                          <td>{{ item.Año }}</td>
+                          <td>{{ item.Aritmetico }}</td>
+                          <td>{{ item.Geometrico }}</td>
+                          <td>{{ item.Exponencial }}</td>
+                          <div v-if="index&&(index==14||index%18==14)" class="html2pdf__page-break"/>
+                          <div v-if="index&&(index==14||index%18==14)" style="height:30px"></div>
+                        </tr>
+                      </b-tbody>
+                    </b-table-simple>
+                  </div>
+                </div>
+                <div class="html2pdf__page-break"/>
+                <div class="row" style="padding-top: 30px;">
+                  <h3>TODOS LOS MODELOS - GRÁFICO</h3>
+                </div>
+                <div class="row" style="padding-top: 20px;">
+                  <div class="chart-container" style="width:1060px">
+                    <LineChart :chart-options="chartOptions" :chart-data="chartData"/>
+                  </div>
+                </div>
+                <div class="html2pdf__page-break"/>
+                <div class="row" style="padding-top: 30px;">
+                  <h3>MEJOR MODELO - DATOS</h3>
+                </div>
+                <div v-if="tableBestAlgorithms.length>0" class="row" style="padding-top: 20px;">
+                  <div class="col-12">
+                    <b-table-simple>
+                      <b-thead class="table-dark">
+                        <b-tr>
+                          <b-th>Año</b-th>
+                          <b-th v-if="tableBestAlgorithms[0].Aritmetico">Aritmético</b-th>
+                          <b-th v-if="tableBestAlgorithms[0].Geometrico">Geométrico</b-th>
+                          <b-th v-if="tableBestAlgorithms[0].Exponencial">Exponencial</b-th>
+                        </b-tr>
+                      </b-thead>
+                      <b-tbody>
+                        <tr v-for="(item,index) in tableBestAlgorithms" :key="index" :class="item.variant">
+                          <td>{{ item.Año }}</td>
+                          <td v-if="item.Aritmetico">{{ item.Aritmetico }}</td>
+                          <td v-if="item.Geometrico">{{ item.Geometrico }}</td>
+                          <td v-if="item.Exponencial">{{ item.Exponencial }}</td>
+                          <div v-if="index&&(index==14||index%18==14)" class="html2pdf__page-break"/>
+                          <div v-if="index&&(index==14||index%18==14)" style="height:30px"></div>
+                        </tr>
+                      </b-tbody>
+                    </b-table-simple>
+                  </div>
+                </div>
+                <div class="html2pdf__page-break"/>
+                <div class="row" style="padding-top: 30px;">
+                  <h3>MEJOR MODELO - GRÁFICO</h3>
+                </div>
+                <div class="row" style="padding-top: 20px;">
+                  <div class="chart-container" style="width:1060px">
+                    <LineChart :chart-options="chartOptions" :chart-data="chartBestData"/>
+                  </div>
+                </div>
+              </section>
+          </vue-html2pdf>
+        </div>
       </b-card>
     </b-container>
     <footer class="text-center p-3 text-white" style="background-color: rgb(33, 37, 41); position: fixed; bottom: 0; width: 100%;">
@@ -237,6 +380,8 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'sweetalert2/dist/sweetalert2.min.css';
+
+import VueHtml2pdf from 'vue-html2pdf'
 
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
@@ -268,10 +413,12 @@ ChartJS.register(
 export default {
   name: 'App',
   components: {
-    LineChart
+    LineChart,
+    VueHtml2pdf
   },
   data() {
     return {
+      statusExport: false,
       // Input año
       año: '',
       // Input poblacion
@@ -288,26 +435,27 @@ export default {
       Censos: [] ,
       form:[],
       modelAritmetic:{
-        incremento:'',
-        errorC:'',
+          incremento:'',
+          errorC:'',
       },
       modelGeometric:{
-        incremento:'',
-        errorC:'',
+          incremento:'',
+          errorC:'',
       },
       modelExponencial:{
-        incremento:'',
-        errorC:'',
+          incremento:'',
+          errorC:'',
       },
       tableResultados:[],
       bestResult:{
-        modelo:'',
-        año:'',
-        poblacion:'',
+          modelo:'',
+          año:'',
+          poblacion:'',
       },
       year: 2018,
       foods:[],
       bestModel:0,
+      bestError:0,
       tableAlgorithms:[],
       dataAñoAlgorithm: [],
       dataPoblacionArithmeticAlgorithm: [],
@@ -467,6 +615,7 @@ export default {
       }
 
       r = r/(n-1);
+      console.log(r)
       this.modelAritmetic.incremento = r
 
       for(i=0;i<years_proy+n;i++){
@@ -500,6 +649,7 @@ export default {
       }
 
       r = r/(n-1);
+      console.log(r)
       this.modelGeometric.incremento = r
 
       for(i=0;i<years_proy+n;i++){
@@ -531,6 +681,7 @@ export default {
       }
 
       r = r/(n-1);
+      console.log(r)
       this.modelExponencial.incremento = r
 
       for(i=0;i<years_proy+n;i++){
@@ -582,19 +733,28 @@ export default {
       this.modelExponencial.errorC = prome
 
       // Selección del mejor modelo
-      var mejorModelo = 0;   // Falso
-      if ( (proma<promg) && (proma<prome) )
+      var mejorModelo = 0;
+      var mejorError = 0;   // Falso
+      if ( (proma<promg) && (proma<prome) ) {
         mejorModelo = 1;
-      else
-        if ( (promg<proma) && (promg<prome) )
+        mejorError = proma;
+      }
+      else {
+        if ( (promg<proma) && (promg<prome) ) {
           mejorModelo = 2;
-        else
-          if ( (prome<proma) && (prome<promg) )
+          mejorError = promg;
+        }
+        else {
+          if ( (prome<proma) && (prome<promg) ) {
             mejorModelo = 3;
+            mejorError = prome;
+          }
+        }
+      }
 
       this.bestModel= mejorModelo
+      this.bestError= mejorError
     },
-
     clearDataAlgorithms: function () {
       this.dataAñoAlgorithm = [];
       //this.chartData.datasets[0].data = [40, 39, 10, 40, 39, 80, 40];
@@ -607,22 +767,22 @@ export default {
       this.dataExponentialAlgorithm = [];
       this.dataPoblacionExponentialAlgorithm = [];
       this.bestResult={
-        modelo:'',
-        año:'',
-        poblacion:'',
+          modelo:'',
+          año:'',
+          poblacion:'',
       };
       this.tableResultados= []
       this.modelAritmetic={
-        incremento:'',
-        errorC:'',
+          incremento:'',
+          errorC:'',
       }
       this.modelGeometric={
-        incremento:'',
-        errorC:'',
+          incremento:'',
+          errorC:'',
       }
       this.modelExponencial={
-        incremento:'',
-        errorC:'',
+          incremento:'',
+          errorC:'',
       }
     },
     clusterAlgorithms: function () {
@@ -630,13 +790,16 @@ export default {
       var years_proy = parseInt(this.form.proyeccion);
       var i
       for (i = 0; i < years_proy+n; i++) {
-        this.tableAlgorithms.push({Año:this.dataArithmeticAlgorithm[i].Año,Aritmetico:this.dataArithmeticAlgorithm[i].Poblacion, Geometrico: this.dataGeometricAlgorithm[i].Poblacion, Exponencial: this.dataExponentialAlgorithm[i].Poblacion})
+        if(i<this.Censos.length) {
+          this.tableAlgorithms.push({Año:this.dataArithmeticAlgorithm[i].Año,Aritmetico:this.dataArithmeticAlgorithm[i].Poblacion, Geometrico: this.dataGeometricAlgorithm[i].Poblacion, Exponencial: this.dataExponentialAlgorithm[i].Poblacion,variant: 'table-secondary'})
+        } else {
+          this.tableAlgorithms.push({Año:this.dataArithmeticAlgorithm[i].Año,Aritmetico:this.dataArithmeticAlgorithm[i].Poblacion, Geometrico: this.dataGeometricAlgorithm[i].Poblacion, Exponencial: this.dataExponentialAlgorithm[i].Poblacion,variant: ''})
+        }
       }
 
       this.chartData.datasets[0].data = this.dataPoblacionArithmeticAlgorithm;
       this.chartData.datasets[1].data = this.dataPoblacionGeometricAlgorithm;
       this.chartData.datasets[2].data = this.dataPoblacionExponentialAlgorithm;
-
     },
     selectAlgorithm: function () {
       //select the most accurate algorithm according to chi-square test
@@ -646,32 +809,43 @@ export default {
       this.mejorModelo()
       if(this.bestModel==1){
         for (i = 0; i < years_proy+n; i++) {
-          this.tableBestAlgorithms.push({Año:this.dataArithmeticAlgorithm[i].Año,Aritmetico: this.dataArithmeticAlgorithm[i].Poblacion})
+          if(i<this.Censos.length) {
+            this.tableBestAlgorithms.push({Año:this.dataArithmeticAlgorithm[i].Año,Aritmetico: this.dataArithmeticAlgorithm[i].Poblacion,variant: 'table-secondary'})
+          } else {
+            this.tableBestAlgorithms.push({Año:this.dataArithmeticAlgorithm[i].Año,Aritmetico: this.dataArithmeticAlgorithm[i].Poblacion,variant: ''})
+          }
         }
-        this.bestResult.modelo= 'Aritmético'
-        this.bestResult.poblacion = this.dataPoblacionArithmeticAlgorithm[this.dataPoblacionArithmeticAlgorithm.length-1]
-        this.bestResult.año = this.dataAñoAlgorithm[this.dataAñoAlgorithm.length-1]
-        this.chartBestData.datasets[0].label = 'Aritmético'
-        this.chartBestData.datasets[0].data = this.dataPoblacionArithmeticAlgorithm;
+          this.chartBestData.datasets[0].label = 'Aritmetico'
+          this.bestResult.modelo= 'Aritmético'
+          this.bestResult.poblacion = this.dataPoblacionArithmeticAlgorithm[this.dataPoblacionArithmeticAlgorithm.length-1]
+          this.bestResult.año = this.dataAñoAlgorithm[this.dataAñoAlgorithm.length-1]
+          this.chartBestData.datasets[0].data = this.dataPoblacionArithmeticAlgorithm;
       }else if(this.bestModel==2){
         for (i = 0; i < years_proy+n; i++) {
-          this.tableBestAlgorithms.push({Año:this.dataArithmeticAlgorithm[i].Año,Geometrico: this.dataGeometricAlgorithm[i].Poblacion})
+          if(i<this.Censos.length) {
+            this.tableBestAlgorithms.push({Año:this.dataArithmeticAlgorithm[i].Año,Geometrico: this.dataGeometricAlgorithm[i].Poblacion,variant: 'table-secondary'})
+          } else {
+            this.tableBestAlgorithms.push({Año:this.dataArithmeticAlgorithm[i].Año,Geometrico: this.dataGeometricAlgorithm[i].Poblacion,variant: ''})
+          }
         }
-        this.bestResult.modelo= 'Geométrico'
-        this.bestResult.poblacion = this.dataPoblacionGeometricAlgorithm[this.dataPoblacionGeometricAlgorithm.length-1]
-        this.bestResult.año = this.dataAñoAlgorithm[this.dataAñoAlgorithm.length-1]
-        this.chartBestData.datasets[0].label = 'Geométrico'
-        this.chartBestData.datasets[0].data = this.dataPoblacionGeometricAlgorithm;
+          this.chartBestData.datasets[0].label = 'Geometrico'
+          this.bestResult.modelo= 'Geométrico'
+          this.bestResult.poblacion = this.dataPoblacionGeometricAlgorithm[this.dataPoblacionGeometricAlgorithm.length-1]
+          this.bestResult.año = this.dataAñoAlgorithm[this.dataAñoAlgorithm.length-1]
+          this.chartBestData.datasets[0].data = this.dataPoblacionGeometricAlgorithm;
       } else {
         for (i = 0; i < years_proy+n; i++) {
-          this.tableBestAlgorithms.push({Año:this.dataArithmeticAlgorithm[i].Año,Exponencial: this.dataExponentialAlgorithm[i].Poblacion})
+          if(i<this.Censos.length) {
+            this.tableBestAlgorithms.push({Año:this.dataArithmeticAlgorithm[i].Año,Exponencial: this.dataExponentialAlgorithm[i].Poblacion,variant: 'table-secondary'})
+          } else {
+            this.tableBestAlgorithms.push({Año:this.dataArithmeticAlgorithm[i].Año,Exponencial: this.dataExponentialAlgorithm[i].Poblacion,variant: ''})
+          }
         }
-        this.bestResult.modelo = 'Exponencial'
-        this.bestResult.poblacion = this.dataPoblacionExponentialAlgorithm[this.dataPoblacionExponentialAlgorithm.length-1]
-        this.bestResult.año = this.dataAñoAlgorithm[this.dataAñoAlgorithm.length-1]
-        this.chartBestData.datasets[0].label = 'Exponencial'
-        this.chartBestData.datasets[0].data = this.dataPoblacionExponentialAlgorithm;
-
+          this.chartBestData.datasets[0].label = 'Exponencial'
+          this.bestResult.modelo = 'Exponencial'
+          this.bestResult.poblacion = this.dataPoblacionExponentialAlgorithm[this.dataPoblacionExponentialAlgorithm.length-1]
+          this.bestResult.año = this.dataAñoAlgorithm[this.dataAñoAlgorithm.length-1]
+          this.chartBestData.datasets[0].data = this.dataPoblacionExponentialAlgorithm;
       }
 
 
@@ -689,6 +863,14 @@ export default {
       this.tableResultados.push({Modelo:'Geométrico', Incremento:(this.modelGeometric.incremento).toFixed(7)  , Error: (this.modelGeometric.errorC).toFixed(6)})
       this.tableResultados.push({Modelo:'Exponencial', Incremento:(this.modelExponencial.incremento).toFixed(7)  , Error: (this.modelExponencial.errorC).toFixed(6)})
     },
+
+    exportToPDF: function () {
+      /*html2pdf(document.getElementById('table-best'), {
+                margin: 10,
+              filename: "i-was-html.pdf",
+            });*/
+      this.$refs.html2Pdf.generatePdf()
+        },
 
     crearCenso: function () {
                 // Anyadimos a nuestra lista
@@ -728,4 +910,3 @@ export default {
 
 }
 </script>
-
